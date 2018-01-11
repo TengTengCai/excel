@@ -29,7 +29,13 @@ public class Method {
     public Cell getCellWithRowAndCol(Sheet sheet, int row, int col){
         Cell cell = null;
         Row sheetRow = sheet.getRow(row);
+        if (sheetRow == null){
+            sheetRow = sheet.createRow(row);
+        }
         cell = sheetRow.getCell(col);
+        if (cell == null){
+            cell = sheetRow.createCell(col);
+        }
         return cell;
     }
 

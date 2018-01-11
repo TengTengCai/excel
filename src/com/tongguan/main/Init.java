@@ -221,6 +221,12 @@ public class Init {
             myMethod.getSumWithColumn(rSheet,i,2,sList.size()+2);
         }
 
+        //总和校验
+
+        Row row = rSheet.getRow(rSheet.getLastRowNum());
+        double[] data = getDataToArray(row);
+        Cell checkCell = myMethod.getCellWithRowAndCol(rSheet,rSheet.getLastRowNum()+2,1);
+        checkCell.setCellValue(doCheck(data));
 
 
         rSheet.autoSizeColumn(0);
@@ -254,17 +260,17 @@ public class Init {
      * @param row 哪一行
      */
     private void accountByFiveYear(Row row){
-        double[] colValue = new double[12];
+        double[] colValue = getDataToArray(row);
         double[] accountAge = new double[6];
-        getDataToArray(row, colValue);
         colValue[11] = getArraySum(colValue);
+        row.createCell(coordinateRuler-1).setCellValue(colValue[11]);
         if (colValue[10] >= (colValue[11]+colValue[10]-colValue[9])){
             accountAge[0] = colValue[11];
         }else{
             accountAge[0] = colValue[9];
         }
         System.out.println("1年以内:"+accountAge[0]);
-        row.createCell(13).setCellValue(accountAge[0]);
+        row.createCell(coordinateRuler).setCellValue(accountAge[0]);
         if ((colValue[10]+colValue[8]) >= (colValue[11]+colValue[10]
                 -colValue[9]+colValue[8]-colValue[7])){
             accountAge[1] = colValue[11]-accountAge[0];
@@ -272,7 +278,7 @@ public class Init {
             accountAge[1] = colValue[7];
         }
         System.out.println("1-2年:"+accountAge[1]);
-        row.createCell(14).setCellValue(accountAge[1]);
+        row.createCell(coordinateRuler+1).setCellValue(accountAge[1]);
         if ((colValue[10]+colValue[8]+colValue[6])>=(colValue[11]
                 +colValue[10]-colValue[9]+colValue[8]-colValue[7]+colValue[6]-colValue[5])){
             accountAge[2] = colValue[11]-accountAge[0]-accountAge[1];
@@ -280,7 +286,7 @@ public class Init {
             accountAge[2] = colValue[5];
         }
         System.out.println("2-3年:"+accountAge[2]);
-        row.createCell(15).setCellValue(accountAge[2]);
+        row.createCell(coordinateRuler+2).setCellValue(accountAge[2]);
         if ((colValue[10]+colValue[8]+colValue[6]+colValue[4])>=
                 (colValue[11]+colValue[10]-colValue[9]+colValue[8]
                         -colValue[7]+colValue[6]-colValue[5]+colValue[4]
@@ -290,7 +296,7 @@ public class Init {
             accountAge[3] = colValue[3];
         }
         System.out.println("3-4年:"+accountAge[3]);
-        row.createCell(16).setCellValue(accountAge[3]);
+        row.createCell(coordinateRuler+3).setCellValue(accountAge[3]);
         if ((colValue[10]+colValue[8]+colValue[6]+colValue[4]+colValue[2])>=
                 (colValue[11]+colValue[10]-colValue[9]+colValue[8]
                         -colValue[7]+colValue[6]-colValue[5]+colValue[4]
@@ -300,10 +306,11 @@ public class Init {
             accountAge[4] = colValue[1];
         }
         System.out.println("4-5年:"+accountAge[4]);
-        row.createCell(17).setCellValue(accountAge[4]);
+        row.createCell(coordinateRuler+4).setCellValue(accountAge[4]);
         accountAge[5] = colValue[11]-accountAge[4]-accountAge[3]-accountAge[2]-accountAge[1]-accountAge[0];
         System.out.println("5年以上:"+accountAge[5]);
-        row.createCell(18).setCellValue(accountAge[5]);
+        row.createCell(coordinateRuler+5).setCellValue(accountAge[5]);
+        row.createCell(coordinateRuler+6).setCellValue(doCheck(colValue));
 
     }
 
@@ -312,9 +319,11 @@ public class Init {
      * @param row 哪一行
      */
     public void accountByFourYear(Row row){
-        double[] colValue = new double[10];
+        double[] colValue = getDataToArray(row);
         double[] accountAge = new double[6];
-        getDataToArray(row, colValue);
+
+        colValue[9] = getArraySum(colValue);
+        row.createCell(coordinateRuler-1).setCellValue(colValue[9]);
         if (colValue[8] >= (colValue[9]+colValue[8]-colValue[7])){
             accountAge[0] = colValue[9];
         }else{
@@ -352,6 +361,7 @@ public class Init {
         accountAge[4] = colValue[9]-accountAge[3]-accountAge[2]-accountAge[1]-accountAge[0];
         System.out.println("4年以上:"+accountAge[4]);
         row.createCell(coordinateRuler+4).setCellValue(accountAge[4]);
+        row.createCell(coordinateRuler+5).setCellValue(doCheck(colValue));
     }
 
     /**
@@ -359,9 +369,11 @@ public class Init {
      * @param row 哪一行
      */
     public void accountByThreeYear(Row row){
-        double[] colValue = new double[8];
+        double[] colValue = getDataToArray(row);
         double[] accountAge = new double[5];
-        getDataToArray(row, colValue);
+
+        colValue[7] = getArraySum(colValue);
+        row.createCell(coordinateRuler-1).setCellValue(colValue[7]);
         if (colValue[6] >= (colValue[7]+colValue[6]-colValue[5])){
             accountAge[0] = colValue[7];
         }else{
@@ -390,19 +402,20 @@ public class Init {
         System.out.println("2-3年:"+accountAge[2]);
         row.createCell(coordinateRuler+2).setCellValue(accountAge[2]);
 
-
         accountAge[3] = colValue[7]-accountAge[2]-accountAge[1]-accountAge[0];
         System.out.println("3年以上:"+accountAge[3]);
         row.createCell(coordinateRuler+3).setCellValue(accountAge[3]);
+
+        row.createCell(coordinateRuler+4).setCellValue(doCheck(colValue));
     }
 
     /**
      * 将Cell中的数据添加到Array中
      * @param row 哪一行
-     * @param colValue 哪几列
      */
-    private void getDataToArray(Row row, double[] colValue) {
-        for (int i = 1;i < coordinateRuler-1;i++){
+    private double[] getDataToArray(Row row) {
+        double[] colValue = new double[coordinateRuler-1];
+        for (int i = 1;i < coordinateRuler;i++){
             Cell cell = row.getCell(i);
             if (cell == null){
                 cell = row.createCell(i);
@@ -410,12 +423,39 @@ public class Init {
             cell.setCellType(CellType.STRING);
             colValue[i-1] = Double.valueOf(cell.getStringCellValue().isEmpty()?"0.00":cell.getStringCellValue());
         }
+        return colValue;
     }
 
     private double getArraySum(double[] array){
         double sum = 0.0;
-        for (double item:array){
-            sum = sum + item;
+        for (int i = 0 ; i<array.length;i++){
+            if (i == 0){
+                sum = sum + array[i];
+            }else{
+                if (i%2 == 0){
+                    sum = sum - array[i];
+                }else {
+                    sum = sum + array[i];
+                }
+            }
+        }
+        return sum;
+    }
+
+    private double doCheck(double[] array){
+        double sum = 0.0;
+        for (int i = 0 ; i<array.length;i++){
+            if (i == 0){
+                sum = sum + array[i];
+            }else if (i == array.length-1){
+                sum = sum - array[i];
+            }else{
+                if (i%2 == 0){
+                    sum = sum - array[i];
+                }else {
+                    sum = sum + array[i];
+                }
+            }
         }
         return sum;
     }
