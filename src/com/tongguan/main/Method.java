@@ -5,6 +5,8 @@ import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import sun.misc.Cleaner;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -220,13 +222,20 @@ public class Method {
                 sum = sum + Double.valueOf(stringCellValue);
             }
         }
+        BigDecimal b = new BigDecimal(sum);
+        sum = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        DecimalFormat df = new DecimalFormat("###0.00 ");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        //保留两位小数且不用科学计数法，并不使用千分位
+        String value = df.format(sum);
+
         int rowIndex = sheet.getLastRowNum();
         Row row = sheet.getRow(rowIndex);
         if (row == null){
             row = sheet.createRow(rowIndex);
         }
         Cell sumCell =  row.createCell(col);
-        sumCell.setCellValue(sum);
+        sumCell.setCellValue(value);
         return sum;
     }
 

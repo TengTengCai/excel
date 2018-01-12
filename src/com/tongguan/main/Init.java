@@ -298,7 +298,7 @@ public class Init {
             accountAge[0] = colValue[9];
         }
         System.out.println("1年以内:" + accountAge[0]);
-        row.createCell(coordinateRuler).setCellValue(accountAge[0]);
+        row.createCell(coordinateRuler).setCellValue(changeType(accountAge[0]));
         if ((colValue[10] + colValue[8]) >= (colValue[11] + colValue[10]
                 - colValue[9] + colValue[8] - colValue[7])) {
             accountAge[1] = colValue[11] - accountAge[0];
@@ -306,7 +306,7 @@ public class Init {
             accountAge[1] = colValue[7];
         }
         System.out.println("1-2年:" + accountAge[1]);
-        row.createCell(coordinateRuler + 1).setCellValue(accountAge[1]);
+        row.createCell(coordinateRuler + 1).setCellValue(changeType(accountAge[1]));
         if ((colValue[10] + colValue[8] + colValue[6]) >= (colValue[11]
                 + colValue[10] - colValue[9] + colValue[8] - colValue[7] + colValue[6] - colValue[5])) {
             accountAge[2] = colValue[11] - accountAge[0] - accountAge[1];
@@ -314,7 +314,7 @@ public class Init {
             accountAge[2] = colValue[5];
         }
         System.out.println("2-3年:" + accountAge[2]);
-        row.createCell(coordinateRuler + 2).setCellValue(accountAge[2]);
+        row.createCell(coordinateRuler + 2).setCellValue(changeType(accountAge[2]));
         if ((colValue[10] + colValue[8] + colValue[6] + colValue[4]) >=
                 (colValue[11] + colValue[10] - colValue[9] + colValue[8]
                         - colValue[7] + colValue[6] - colValue[5] + colValue[4]
@@ -324,7 +324,7 @@ public class Init {
             accountAge[3] = colValue[3];
         }
         System.out.println("3-4年:" + accountAge[3]);
-        row.createCell(coordinateRuler + 3).setCellValue(accountAge[3]);
+        row.createCell(coordinateRuler + 3).setCellValue((accountAge[3]));
         if ((colValue[10] + colValue[8] + colValue[6] + colValue[4] + colValue[2]) >=
                 (colValue[11] + colValue[10] - colValue[9] + colValue[8]
                         - colValue[7] + colValue[6] - colValue[5] + colValue[4]
@@ -334,12 +334,12 @@ public class Init {
             accountAge[4] = colValue[1];
         }
         System.out.println("4-5年:" + accountAge[4]);
-        row.createCell(coordinateRuler + 4).setCellValue(accountAge[4]);
+        row.createCell(coordinateRuler + 4).setCellValue(changeType(accountAge[4]));
         accountAge[5] = colValue[11] - accountAge[4] - accountAge[3] - accountAge[2] - accountAge[1] - accountAge[0];
         System.out.println("5年以上:" + accountAge[5]);
-        row.createCell(coordinateRuler + 5).setCellValue(accountAge[5]);
+        row.createCell(coordinateRuler + 5).setCellValue(changeType(accountAge[5]));
         Cell checkCell = listData.get(row.getRowNum() - 2);
-        System.out.println(Double.valueOf(changeType(Double.valueOf(checkCell.getStringCellValue()))));
+//        System.out.println(Double.valueOf(changeType(Double.valueOf(checkCell.getStringCellValue()))));
         row.createCell(coordinateRuler + 6).setCellValue(doCheck(colValue,Double.valueOf(checkCell.getStringCellValue())));
 
     }
@@ -361,7 +361,7 @@ public class Init {
             accountAge[0] = colValue[7];
         }
         System.out.println("1年以内:" + accountAge[0]);
-        row.createCell(coordinateRuler).setCellValue(accountAge[0]);
+        row.createCell(coordinateRuler).setCellValue(changeType(accountAge[0]));
         if ((colValue[8] + colValue[6]) >= (colValue[9] + colValue[8]
                 - colValue[7] + colValue[6] - colValue[5])) {
             accountAge[1] = colValue[9] - accountAge[0];
@@ -369,7 +369,7 @@ public class Init {
             accountAge[1] = colValue[5];
         }
         System.out.println("1-2年:" + accountAge[1]);
-        row.createCell(coordinateRuler + 1).setCellValue(accountAge[1]);
+        row.createCell(coordinateRuler + 1).setCellValue(changeType(accountAge[1]));
         if ((colValue[8] + colValue[6] + colValue[4]) >= (colValue[9]
                 + colValue[8] - colValue[7] + colValue[6] - colValue[5] + colValue[4] - colValue[3])) {
             accountAge[2] = colValue[9] - accountAge[0] - accountAge[1];
@@ -377,7 +377,7 @@ public class Init {
             accountAge[2] = colValue[3];
         }
         System.out.println("2-3年:" + accountAge[2]);
-        row.createCell(coordinateRuler + 2).setCellValue(accountAge[2]);
+        row.createCell(coordinateRuler + 2).setCellValue(changeType(accountAge[2]));
         if ((colValue[8] + colValue[6] + colValue[4] + colValue[2]) >=
                 (colValue[9] + colValue[8] - colValue[7] + colValue[6]
                         - colValue[5] + colValue[4] - colValue[3] + colValue[2]
@@ -387,11 +387,11 @@ public class Init {
             accountAge[3] = colValue[1];
         }
         System.out.println("3-4年:" + accountAge[3]);
-        row.createCell(coordinateRuler + 3).setCellValue(accountAge[3]);
+        row.createCell(coordinateRuler + 3).setCellValue(changeType(accountAge[3]));
 
         accountAge[4] = colValue[9] - accountAge[3] - accountAge[2] - accountAge[1] - accountAge[0];
         System.out.println("4年以上:" + accountAge[4]);
-        row.createCell(coordinateRuler + 4).setCellValue(accountAge[4]);
+        row.createCell(coordinateRuler + 4).setCellValue(changeType(accountAge[4]));
         Cell checkCell = listData.get(row.getRowNum() - 2);
         row.createCell(coordinateRuler + 5).setCellValue(doCheck(colValue, Double.valueOf(checkCell.getStringCellValue())));
     }
@@ -413,7 +413,7 @@ public class Init {
             accountAge[0] = colValue[5];
         }
         System.out.println("1年以内:" + accountAge[0]);
-        row.createCell(coordinateRuler).setCellValue(accountAge[0]);
+        row.createCell(coordinateRuler).setCellValue(changeType(accountAge[0]));
 
 
         if ((colValue[6] + colValue[4]) >= (colValue[7] + colValue[6]
@@ -423,7 +423,7 @@ public class Init {
             accountAge[1] = colValue[3];
         }
         System.out.println("1-2年:" + accountAge[1]);
-        row.createCell(coordinateRuler + 1).setCellValue(accountAge[1]);
+        row.createCell(coordinateRuler + 1).setCellValue(changeType(accountAge[1]));
 
 
         if ((colValue[6] + colValue[4] + colValue[2]) >= (colValue[7]
@@ -433,11 +433,11 @@ public class Init {
             accountAge[2] = colValue[3];
         }
         System.out.println("2-3年:" + accountAge[2]);
-        row.createCell(coordinateRuler + 2).setCellValue(accountAge[2]);
+        row.createCell(coordinateRuler + 2).setCellValue(changeType(accountAge[2]));
 
         accountAge[3] = colValue[7] - accountAge[2] - accountAge[1] - accountAge[0];
         System.out.println("3年以上:" + accountAge[3]);
-        row.createCell(coordinateRuler + 3).setCellValue(accountAge[3]);
+        row.createCell(coordinateRuler + 3).setCellValue(changeType(accountAge[3]));
 
         Cell checkCell = listData.get(row.getRowNum() - 2);
 
