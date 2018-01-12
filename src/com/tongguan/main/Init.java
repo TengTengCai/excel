@@ -56,10 +56,10 @@ public class Init {
         rWorkBook = new XSSFWorkbook();
         styleController = new ExcelStyleController(rWorkBook);
         initCustomerList();         //初始化客户列表
-//        initHeader();               //初始化表头
-//        getData();                  //获取数据
-//        putData();                  //填写数据
-//        doOperation();              //进行相关的操作，计算
+        initHeader();               //初始化表头
+        getData();                  //获取数据
+        putData();                  //填写数据
+        doOperation();              //进行相关的操作，计算
         rSheet.autoSizeColumn(0);   //宽度自适应
         try {
             fileController.saveExcleFile(rWorkBook, outFilePath);
@@ -80,7 +80,7 @@ public class Init {
         //初始化客户列表
         rSheet = rWorkBook.createSheet("应收");
         for (int i = 0; i < sList.size(); i++) {
-            Row row = rSheet.createRow(i + 1);
+            Row row = rSheet.createRow(i + 5);
             Cell cell = row.createCell(0);
             cell.setCellType(CellType.STRING);
             if (i == 0) {
@@ -94,8 +94,8 @@ public class Init {
     private void initHeader(){
         //初始化表头
         int count = sheetNumbers;
-        Row row0 = rSheet.createRow(0);
-        Row row1 = rSheet.getRow(1);
+        Row row0 = rSheet.createRow(4);
+        Row row1 = rSheet.getRow(5);
         int temp = 1;
         for (int i = 0; i < count; i++) {
             if (i == 0) {
@@ -148,14 +148,14 @@ public class Init {
             case 3:
                 row1.createCell(temp++).setCellValue("3年以上");
                 row1.createCell(temp).setCellValue("校验");
-                rSheet.addMergedRegion(new CellRangeAddress(0, 0, temp2, temp2 + 3));
+                rSheet.addMergedRegion(new CellRangeAddress(4, 4, temp2, temp2 + 3));
                 coordinateRuler = 9;
                 break;
             case 4:
                 row1.createCell(temp++).setCellValue("3-4年");
                 row1.createCell(temp++).setCellValue("4年以上");
                 row1.createCell(temp).setCellValue("校验");
-                rSheet.addMergedRegion(new CellRangeAddress(0, 0, temp2, temp2 + 4));
+                rSheet.addMergedRegion(new CellRangeAddress(4, 4, temp2, temp2 + 4));
                 coordinateRuler = 11;
                 break;
             case 5:
@@ -163,12 +163,11 @@ public class Init {
                 row1.createCell(temp++).setCellValue("4-5年");
                 row1.createCell(temp++).setCellValue("5年以上");
                 row1.createCell(temp).setCellValue("校验");
-                rSheet.addMergedRegion(new CellRangeAddress(0, 0, temp2, temp2 + 5));
+                rSheet.addMergedRegion(new CellRangeAddress(4, 4, temp2, temp2 + 5));
                 coordinateRuler = 13;
                 break;
             default:
                 break;
-
         }
     }
 
@@ -232,7 +231,7 @@ public class Init {
     private void doOperation(){
         //      计算相关的数值
         for (int i = 0; i < sList.size(); i++) {
-            Row row = rSheet.getRow(2 + i);
+            Row row = rSheet.getRow(6 + i);
             switch (sheetNumbers) {
                 case 5:
                     accountByFiveYear(row);
@@ -250,17 +249,18 @@ public class Init {
         }
 
         //求有关列的和
-        for (int i = 1; i < rSheet.getRow(1).getLastCellNum(); i++) {
-            myMethod.getSumWithColumn(rSheet, i, 2, sList.size() + 2);
+        for (int i = 1; i < rSheet.getRow(6).getLastCellNum(); i++) {
+            myMethod.getSumWithColumn(rSheet, i, 6, sList.size() + 6);
         }
 
-        //总和校验
+//        总和校验
 
         Row row = rSheet.getRow(rSheet.getLastRowNum());
         double[] data = getDataToArray(row);
         Cell cellCheckValue = rSheet.getRow(rSheet.getLastRowNum()).getCell(coordinateRuler - 1);
         cellCheckValue.setCellType(CellType.STRING);
         double checkData = Double.valueOf(cellCheckValue.getStringCellValue());
+
         Cell checkCell = myMethod.getCellWithRowAndCol(rSheet, rSheet.getLastRowNum() + 2, 1);
         checkCell.setCellValue(doCheck(data, checkData));
     }
@@ -439,9 +439,11 @@ public class Init {
         System.out.println("3年以上:" + accountAge[3]);
         row.createCell(coordinateRuler + 3).setCellValue(changeType(accountAge[3]));
 
-        Cell checkCell = listData.get(row.getRowNum() - 2);
-
-        row.createCell(coordinateRuler + 4).setCellValue(doCheck(colValue,Double.valueOf(changeType(Double.valueOf(checkCell.getStringCellValue()))) ));
+        int test = row.getRowNum();
+        Cell checkCell = listData.get(test - 6);
+        double test1 =  Double.valueOf(changeType(Double.valueOf(checkCell.getStringCellValue())));
+        double test2 = doCheck(colValue,test1);
+        row.createCell(coordinateRuler + 4).setCellValue(test2);
     }
 
     /**

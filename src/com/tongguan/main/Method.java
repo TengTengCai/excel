@@ -183,7 +183,7 @@ public class Method {
      */
     public Cell selectCellByCustomerTitleYear(Sheet sheet,String customer,String title,String year){
         List<Cell> years = selectCellsByValue(sheet,year+"年");
-        Row row = sheet.getRow(1);
+        Row row = sheet.getRow(5);
         int iCol = 0;
         for (Cell cell:years){
             iCol = cell.getColumnIndex();
