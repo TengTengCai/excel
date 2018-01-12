@@ -32,6 +32,7 @@ public class Init {
     private Sheet rSheet;
     private List<Cell> sList;
     private List<Cell> listData;
+    private List<DataBean> dataBeanList;
 
     public Init() {
     }
@@ -54,9 +55,43 @@ public class Init {
         sheetNumbers = sWorkBook.getNumberOfSheets();
         rWorkBook = new XSSFWorkbook();
         styleController = new ExcelStyleController(rWorkBook);
-        InitCustomerList();
+        initCustomerList();         //初始化客户列表
+//        initHeader();               //初始化表头
+//        getData();                  //获取数据
+//        putData();                  //填写数据
+//        doOperation();              //进行相关的操作，计算
+        rSheet.autoSizeColumn(0);   //宽度自适应
+        try {
+            fileController.saveExcleFile(rWorkBook, outFilePath);
+        } catch (IOException e) {
+//            e.printStackTrace();
+            System.out.println("保存文件失败！错误信息为：" + e);
+        }
+    }
 
+    private void initCustomerList() {
+        //获取客户列表
+        sSheet = sWorkBook.getSheetAt(sheetNumbers - 1);
+        sList = myMethod.getColumnWithCol(sSheet, 0);
+        for (Cell cell : sList) {
+            cell.setCellType(CellType.STRING);
+            System.out.println(cell.getStringCellValue());
+        }
+        //初始化客户列表
+        rSheet = rWorkBook.createSheet("应收");
+        for (int i = 0; i < sList.size(); i++) {
+            Row row = rSheet.createRow(i + 1);
+            Cell cell = row.createCell(0);
+            cell.setCellType(CellType.STRING);
+            if (i == 0) {
+                cell.setCellValue("客户名称");
+            } else {
+                cell.setCellValue(sList.get(i).getStringCellValue());
+            }
+        }
+    }
 
+    private void initHeader(){
         //初始化表头
         int count = sheetNumbers;
         Row row0 = rSheet.createRow(0);
@@ -99,13 +134,11 @@ public class Init {
                 }
             }
         }
-
-
         //可封装成对应的方法
         Cell cell = row0.createCell(temp);
         XSSFCellStyle cellStyle = (XSSFCellStyle) styleController.alignCenterWithCenter();
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("帐龄");
+        cell.setCellValue("账龄");
         int temp2 = temp;
 //        rSheet.addMergedRegion(new CellRangeAddress(0,0,temp,temp+5));
         row1.createCell(temp++).setCellValue("1年以内");
@@ -137,13 +170,16 @@ public class Init {
                 break;
 
         }
+    }
 
 
+
+    private void getData(){
         //获取对应的数据
         sList.remove(0);
         System.out.println(sList.size());
         int sheetId = 0;
-        List<DataBean> dataBeanList = new ArrayList<>();
+        dataBeanList = new ArrayList<>();
         for (Sheet sheet : sWorkBook) {
             for (Cell customerCell : sList) {
                 customerCell.setCellType(CellType.STRING);
@@ -160,12 +196,9 @@ public class Init {
             sheetId++;
         }
         listData.remove(0);
+    }
 
-
-        //数据清洗
-
-
-//        System.out.println(dataBeanList.size());
+    private void putData(){
         //将对应的数据提取出来，获取到文件中
         for (DataBean dataBean : dataBeanList) {
 
@@ -194,9 +227,10 @@ public class Init {
             test.setCellStyle(styleController.dataFormatWithMonetary2());
             System.out.println(dataBean.getYear() + "年," + "客户：" + dataBean.getCustomer() + "标题：" + dataBean.getTitleName() + "数值：" + value);
         }
+    }
 
-
-//      计算相关的数值
+    private void doOperation(){
+        //      计算相关的数值
         for (int i = 0; i < sList.size(); i++) {
             Row row = rSheet.getRow(2 + i);
             switch (sheetNumbers) {
@@ -229,41 +263,7 @@ public class Init {
         double checkData = Double.valueOf(cellCheckValue.getStringCellValue());
         Cell checkCell = myMethod.getCellWithRowAndCol(rSheet, rSheet.getLastRowNum() + 2, 1);
         checkCell.setCellValue(doCheck(data, checkData));
-
-
-        rSheet.autoSizeColumn(0);
-//        myMethod.createContentType(rWorkBook);
-        try {
-            fileController.saveExcleFile(rWorkBook, outFilePath);
-        } catch (IOException e) {
-//            e.printStackTrace();
-            System.out.println("保存文件失败！错误信息为：" + e);
-        }
     }
-
-    private void InitCustomerList() {
-        //获取客户列表
-        sSheet = sWorkBook.getSheetAt(sheetNumbers - 1);
-        sList = myMethod.getColumnWithCol(sSheet, 0);
-        for (Cell cell : sList) {
-            cell.setCellType(CellType.STRING);
-            System.out.println(cell.getStringCellValue());
-        }
-        //初始化客户列表
-        rSheet = rWorkBook.createSheet("应收");
-        for (int i = 0; i < sList.size(); i++) {
-            Row row = rSheet.createRow(i + 1);
-            Cell cell = row.createCell(0);
-            cell.setCellType(CellType.STRING);
-            if (i == 0) {
-                cell.setCellValue("客户名称");
-            } else {
-                cell.setCellValue(sList.get(i).getStringCellValue());
-            }
-        }
-    }
-
-
     /**
      * 添加DataBean到List中
      *
