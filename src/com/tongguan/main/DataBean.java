@@ -1,16 +1,20 @@
 package com.tongguan.main;
 
+import java.math.BigDecimal;
+
 public class DataBean {
     private String customer;
     private String titleName;
     private String year;
-    private String value;
+    private Double value;
 
-    public DataBean(String customer, String titleName, String year, String value) {
+    public DataBean(String customer, String titleName, String year, Double value) {
         this.customer = customer;
         this.titleName = titleName;
         this.year = year;
         this.value = value;
+        BigDecimal b = new BigDecimal(this.value);
+        this.value = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     public DataBean() {
@@ -28,7 +32,7 @@ public class DataBean {
         return year;
     }
 
-    public String getValue() {
+    public Double getValue() {
         return value;
     }
 
@@ -44,7 +48,7 @@ public class DataBean {
         this.year = year;
     }
 
-    public void setValue(String value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }

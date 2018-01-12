@@ -1,11 +1,11 @@
 package com.tongguan.main;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import sun.misc.Cleaner;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +52,8 @@ public class Method {
     public List<Cell> getColumnWithCol(Sheet sheet,int col){
         List<Cell> sheetCol = new ArrayList<>();
         for (Row row:sheet){
+            Cell cell = row.getCell(col);
+            cell.setCellType(CellType.STRING);
             sheetCol.add(row.getCell(col));
         }
 
@@ -198,7 +200,7 @@ public class Method {
      * @param sheet 哪一张分页
      * @param col   列的位置
      */
-    public void getSumWithColumn(Sheet sheet,int col,int starRow,int endRow){
+    public double getSumWithColumn(Sheet sheet,int col,int starRow,int endRow){
         double sum = 0.00;
         for (int i = starRow;i<=endRow;i++){
             Row row = sheet.getRow(i);
@@ -225,5 +227,48 @@ public class Method {
         }
         Cell sumCell =  row.createCell(col);
         sumCell.setCellValue(sum);
+        return sum;
+    }
+
+    public void createContentType(Workbook workbook){
+        CellStyle cellStyle = workbook.createCellStyle();
+        for (Sheet sheet:workbook){
+            for (Row row:sheet){
+                for (Cell cell: row){
+                    cell.setCellType(CellType.STRING);
+                    String data = cell.getStringCellValue();
+
+                    Boolean isNum = false;//data是否为数值型
+                    Boolean isInteger=false;//data是否为整数
+                    Boolean isPercent=false;//data是否为百分数
+                    Boolean isScience = false;//data是否是科学计数法
+                    if (data != null || "".equals(data)) {
+                        //判断data是否为数值型
+                        isNum = data.toString().matches("^(-?\\d+)(\\.\\d+)?$");
+                        //判断data是否为整数（小数部分是否为0）
+                        isInteger=data.toString().matches("^[-\\+]?[\\d]*$");
+                        //判断data是否为百分数（是否包含“%”）
+                        isPercent=data.toString().contains("%");
+                        isScience = data.matches("^((-?\\\\d+.?\\\\d*)[Ee]{1}(-?\\\\d+))$");
+                    }
+                    if (isNum && !isPercent) {
+                        XSSFDataFormat df = (XSSFDataFormat) workbook.createDataFormat(); // 此处设置数据格式
+                        if (isInteger) {
+                            cellStyle.setDataFormat(df.getFormat("#,#0"));//数据格式只显示整数
+                        }else{
+                            cellStyle.setDataFormat(df.getFormat("#,##0.00"));//保留两位小数点
+                        }
+                        // 设置单元格格式
+                        cell.setCellStyle(cellStyle);
+                        // 设置单元格内容为double类型
+                        cell.setCellValue(Double.parseDouble(data.toString()));
+                    } else {
+                        cell.setCellStyle(cellStyle);
+                        // 设置单元格内容为字符型
+                        cell.setCellValue(data.toString());
+                    }
+                }
+            }
+        }
     }
 }
