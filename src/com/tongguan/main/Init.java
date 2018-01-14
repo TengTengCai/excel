@@ -3,6 +3,7 @@ package com.tongguan.main;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class Init {
     private Workbook sWorkBook;
     private XSSFWorkbook rWorkBook;
     private Sheet sSheet;
-    private Sheet rSheet;
+    private XSSFSheet rSheet;
     private List<Cell> sList;
     private List<Cell> listData;
     private List<DataBean> dataBeanList;
@@ -61,6 +62,11 @@ public class Init {
         putData();                  //填写数据
         doOperation();              //进行相关的操作，计算
         rSheet.autoSizeColumn(0);   //宽度自适应
+
+        //将数据类型转换成数字形式
+        //typeStringToNumber(rSheet);
+
+
         try {
             fileController.saveExcleFile(rWorkBook, outFilePath);
         } catch (IOException e) {
@@ -264,6 +270,7 @@ public class Init {
         Cell checkCell = myMethod.getCellWithRowAndCol(rSheet, rSheet.getLastRowNum() + 2, 1);
         checkCell.setCellValue(doCheck(data, checkData));
     }
+
     /**
      * 添加DataBean到List中
      *
@@ -338,7 +345,7 @@ public class Init {
         accountAge[5] = colValue[11] - accountAge[4] - accountAge[3] - accountAge[2] - accountAge[1] - accountAge[0];
         System.out.println("5年以上:" + accountAge[5]);
         row.createCell(coordinateRuler + 5).setCellValue(changeType(accountAge[5]));
-        Cell checkCell = listData.get(row.getRowNum() - 2);
+        Cell checkCell = listData.get(row.getRowNum() - 6);
 //        System.out.println(Double.valueOf(changeType(Double.valueOf(checkCell.getStringCellValue()))));
         row.createCell(coordinateRuler + 6).setCellValue(doCheck(colValue,Double.valueOf(checkCell.getStringCellValue())));
 
@@ -392,7 +399,7 @@ public class Init {
         accountAge[4] = colValue[9] - accountAge[3] - accountAge[2] - accountAge[1] - accountAge[0];
         System.out.println("4年以上:" + accountAge[4]);
         row.createCell(coordinateRuler + 4).setCellValue(changeType(accountAge[4]));
-        Cell checkCell = listData.get(row.getRowNum() - 2);
+        Cell checkCell = listData.get(row.getRowNum() - 6);
         row.createCell(coordinateRuler + 5).setCellValue(doCheck(colValue, Double.valueOf(checkCell.getStringCellValue())));
     }
 
@@ -470,6 +477,11 @@ public class Init {
         return colValue;
     }
 
+    /**
+     * 获取数组算法计算期末余额
+     * @param array 需要计算的数组
+     * @return 返回期末余额
+     */
     private double getArraySum(double[] array) {
         double sum = 0.0;
         for (int i = 0; i < array.length; i++) {
@@ -487,6 +499,12 @@ public class Init {
         return sum;
     }
 
+    /**
+     *  校验期末余额是否正确
+     * @param array
+     * @param value
+     * @return
+     */
     private double doCheck(double[] array, double value) {
         double check = 0.0;
         for (int i = 0; i < array.length - 1; i++) {
@@ -507,13 +525,11 @@ public class Init {
         return check;
     }
 
-    private Cell getCellByRow(Row row, int col) {
-        Cell cell = row.getCell(col);
-        if (cell == null) {
-            cell = row.createCell(col);
-        }
-        return cell;
-    }
+    /**
+     * 改变数据格式为小数点后两位
+     * @param data
+     * @return
+     */
     private String changeType(double data){
         BigDecimal b = new BigDecimal(data);
         data = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -522,6 +538,14 @@ public class Init {
         //保留两位小数且不用科学计数法，并不使用千分位
         String value = df.format(data);
         return value;
+    }
+
+    private void typeStringToNumber(Sheet sheet){
+        for (Row row:sheet){
+            for (Cell cell:row){
+                cell.setCellType(CellType.NUMERIC);
+            }
+        }
     }
 
 }
